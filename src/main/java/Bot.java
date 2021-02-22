@@ -1,4 +1,5 @@
 import org.brunocvcunha.instagram4j.Instagram4j;
+import org.brunocvcunha.instagram4j.requests.InstagramFollowRequest;
 import org.brunocvcunha.instagram4j.requests.InstagramPostCommentRequest;
 import org.brunocvcunha.instagram4j.requests.InstagramSearchUsernameRequest;
 import org.brunocvcunha.instagram4j.requests.InstagramUserFeedRequest;
@@ -24,6 +25,9 @@ public class Bot{
             System.out.println(post.caption.getText());
             System.out.println(post.getLike_count());
         }
+
+        InstagramSearchUsernameResult userResult = instagram.sendRequest(new InstagramSearchUsernameRequest("user"));
+		instagram.sendRequest(new InstagramFollowRequest(userResult.getUser().getPk()));
 
 
 
