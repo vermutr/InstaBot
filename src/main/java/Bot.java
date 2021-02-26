@@ -1,33 +1,30 @@
+import config.ApiConfiguration;
 import org.brunocvcunha.instagram4j.Instagram4j;
 import org.brunocvcunha.instagram4j.requests.InstagramFollowRequest;
-import org.brunocvcunha.instagram4j.requests.InstagramPostCommentRequest;
 import org.brunocvcunha.instagram4j.requests.InstagramSearchUsernameRequest;
-import org.brunocvcunha.instagram4j.requests.InstagramUserFeedRequest;
-import org.brunocvcunha.instagram4j.requests.payload.InstagramFeedItem;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramFeedResult;
 import org.brunocvcunha.instagram4j.requests.payload.InstagramSearchUsernameResult;
+import service.InstagramUserInfo;
 
 import java.io.IOException;
 
 public class Bot{
     public static void main(String[] args) throws IOException {
 
-        Instagram4j instagram = Instagram4j.builder().username("username").password("password").build();
-        instagram.setup();
-        instagram.login();
-        InstagramSearchUsernameResult usernameResult = instagram.sendRequest(new InstagramSearchUsernameRequest("vermut.r"));
-        System.out.println(usernameResult.getUser().biography);
-        System.out.println(usernameResult.getUser().username);
-        System.out.println(usernameResult.getUser().getFollower_count());
+        ApiConfiguration apiConfiguration=new ApiConfiguration();
+        Instagram4j instagram = apiConfiguration.instagram4j("username", "password");
+        InstagramSearchUsernameRequest instagramSearchUsernameRequest = apiConfiguration.instagramSearchUsernameRequest("username");
+        InstagramSearchUsernameResult instagramSearchUsernameResult = apiConfiguration.instagramSearchUsernameResult(instagram, instagramSearchUsernameRequest);
+        InstagramFeedResult instagramFeedResult = apiConfiguration.instagramFeedRequest(instagram,instagramSearchUsernameResult);
 
-        InstagramFeedResult postList = instagram.sendRequest(new InstagramUserFeedRequest(usernameResult.getUser().getPk()));
-        for(InstagramFeedItem post : postList.getItems()) {
-            System.out.println(post.caption.getText());
-            System.out.println(post.getLike_count());
-        }
 
-        InstagramSearchUsernameResult userResult = instagram.sendRequest(new InstagramSearchUsernameRequest("user"));
-		instagram.sendRequest(new InstagramFollowRequest(userResult.getUser().getPk()));
+        InstagramUserInfo instagramUserInfo = new InstagramUserInfo(
+                instagramSearchUsernameResult,
+                instagramFeedResult
+        );
+
+        instagramUserInfo.getUserInfoPage();
+
 
 
 
